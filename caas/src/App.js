@@ -7,7 +7,7 @@ class App extends Component {
     return (
       <div>
 
-      <Claseejemplo titulo="titulo :D:D"/>
+      <Claseejemplo titulo="titulo :D:D:D"/>
 
       </div>
     );
