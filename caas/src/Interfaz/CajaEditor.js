@@ -5,11 +5,12 @@ import 'brace/theme/textmate';
 import { Button } from 'react-bootstrap';
 import { ButtonToolbar } from 'react-bootstrap';
 import { Tab,Tabs } from 'react-bootstrap';
-import "./Break.css";
+import "../Break.css";
 
 var TextoAltoNivel="Bienvenido a Caas";
 
 class Acee extends React.Component {
+
 
   constructor(props){
     super(props);
@@ -17,14 +18,16 @@ class Acee extends React.Component {
     this.state={
       Texto1 : TextoAltoNivel
     }
-
   }
   
   onChange(newValue) {
     console.log('change',newValue);
     TextoAltoNivel=newValue;
-
   }
+
+  /**********************************************************/
+  /*******      BOTON COMPILAR CODIGO ALTO NIVEL      *******/
+  /**********************************************************/
 
   CompilarCAltoNivel = event => {
     alert("Click en el Boton Compilar");
@@ -40,7 +43,21 @@ class Acee extends React.Component {
         alert(BKP[i]);
     }
 
+    var parser = require("../Analizadores/Analizador1").parser;
+
+    function exec (input) {
+        return parser.parse(input);
+    }
+    
+    var twenty = exec(editorAltoNivel.getValue().toString());
+    const editorace1 = this.ace1.editor;
+    editorace1.setValue(twenty.toString());
+
   };
+
+  /**********************************************************/
+  /*******      BOTON COMPILAR CODIGO 3D              *******/
+  /**********************************************************/
 
   CompilarC3D = event => {
     alert("Click en el Boton Compilar C3D");
@@ -48,6 +65,10 @@ class Acee extends React.Component {
     alert("el codigo generado es: "+editor.getValue());
 
   };
+
+  /**********************************************************/
+  /*******      HTML GENERADO                         *******/
+  /**********************************************************/
 
   render()  {
     return (
