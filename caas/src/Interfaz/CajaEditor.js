@@ -7,7 +7,9 @@ import { ButtonToolbar } from 'react-bootstrap';
 import { Tab,Tabs } from 'react-bootstrap';
 import "../Break.css";
 
+
 var TextoAltoNivel="Bienvenido a Caas";
+
 
 class Acee extends React.Component {
 
@@ -30,28 +32,41 @@ class Acee extends React.Component {
   /**********************************************************/
 
   CompilarCAltoNivel = event => {
+
     alert("Click en el Boton Compilar");
-    const editorAltoNivel = this.ace.editor;
-    const editor = this.cajaC3D.editor; // The editor object is from Ace's API
-    editor.setValue(editorAltoNivel.getValue());
 
+    //Definicion de Consolas
+    const editorAltoNivel = this.ace.editor;//Caja del Codigo Alto nivel
+    const editorC3D = this.cajaC3D.editor; // Caja del Codigo 3D
+    const editorConsola1=this.ace1.editor; //Consola Salida
+    const editorConsola2=this.ace2.editor; //Consola Errores
+    const editorConsola3=this.ace3.editor; //Consola Extra
 
+    //Jalada de BreakPoints
     var BKP = editorAltoNivel.session.getBreakpoints();
-
     var i = 0;
     for (i = 0; i < BKP.length; i++) {
         alert(BKP[i]);
     }
 
-    var parser = require("../Analizadores/Analizador1").parser;
+    //Definicion de Clase Graficador y Gramatica
+    var Graficador_1 = require("../Analizadores/Graficador");
+    var parser = require("../Analizadores/Lexico").parser;
 
+    //Ejecutar Parser
     function exec (input) {
         return parser.parse(input);
     }
-    
-    var twenty = exec(editorAltoNivel.getValue().toString());
-    const editorace1 = this.ace1.editor;
-    editorace1.setValue(twenty.toString());
+    var RaizArbol = exec(editorAltoNivel.getValue().toString());
+
+    //LLamada a Metodo de Graficar
+    var graficar = new Graficador_1.Graficador();
+    graficar.GraficarAST(RaizArbol);
+
+    //SAlida del Dot en Consola Extra
+    editorConsola3.setValue(graficar.CadenaDot);
+    //SAlida del C3D
+    editorC3D.setValue(editorAltoNivel.getValue());
 
   };
 
@@ -61,11 +76,37 @@ class Acee extends React.Component {
 
   CompilarC3D = event => {
     alert("Click en el Boton Compilar C3D");
-    const editor = this.cajaC3D.editor; // The editor object is from Ace's API
-    alert("el codigo generado es: "+editor.getValue());
+    //Definicion de Consolas
+    const editorAltoNivel = this.ace.editor;//Caja del Codigo Alto nivel
+    const editorC3D = this.cajaC3D.editor; // Caja del Codigo 3D
+    const editorConsola1=this.ace1.editor; //Consola Salida
+    const editorConsola2=this.ace2.editor; //Consola Errores
+    const editorConsola3=this.ace3.editor; //Consola Extra
+    //Jalada de BreakPoints
+    var BKP = editorAltoNivel.session.getBreakpoints();
+    var i = 0;
+    for (i = 0; i < BKP.length; i++) {
+        alert(BKP[i]);
+    }
+
+    //Definicion de Clase Graficador y Gramatica
+    var Graficador_1 = require("../Analizadores/Graficador");
+    var parser = require("../Analizadores/LexicoC3D").parser;
+
+    //Ejecutar Parser
+    function exec (input) {
+        return parser.parse(input);
+    }
+    var RaizArbol = exec(editorC3D.getValue().toString());
+
+    //LLamada a Metodo de Graficar
+    var graficar = new Graficador_1.Graficador();
+    graficar.GraficarAST(RaizArbol);
+
+    //SAlida del Dot en Consola Extra
+    editorConsola3.setValue(graficar.CadenaDot);
 
   };
-
   /**********************************************************/
   /*******      HTML GENERADO                         *******/
   /**********************************************************/
