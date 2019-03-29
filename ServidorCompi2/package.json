@@ -1,0 +1,23 @@
+{
+  "name": "ServidorCompi2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
+    "prod": "tsc && node ./build/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.16.1",
+    "collections": "^5.1.8",
+    "express": "^4.16.4",
+    "jison": "^0.4.18",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "typescript": "^3.3.4000",
+    "typescript-require": "^0.2.10"
+  }
+}
