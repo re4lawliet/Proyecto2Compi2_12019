@@ -8,23 +8,28 @@ import { Tab,Tabs } from 'react-bootstrap';
 import "../Break.css";
 
 
-var TextoAltoNivel="Bienvenido a Caas";
-
-
 class Acee extends React.Component {
 
 
   constructor(props){
     super(props);
     this.onChange=this.onChange.bind(this);
+    this.onChange2=this.onChange2.bind(this);
     this.state={
-      Texto1 : TextoAltoNivel
+      Texto1 : "Bienvenido a Caas",
+      Texto2 : "Salida3D",
+      Salida : []
     }
+    
   }
   
   onChange(newValue) {
-    console.log('change',newValue);
-    TextoAltoNivel=newValue;
+    const editorAltoNivel = this.ace.editor;//Caja del Codigo Alto nivel
+    this.setState({Texto1: editorAltoNivel.getValue()});
+  }
+  onChange2(newValue) {
+    const editorC3D = this.cajaC3D.editor; // Caja del Codigo 3D
+    this.setState({Texto2: editorC3D.getValue()});
   }
 
   /**********************************************************/
@@ -49,6 +54,31 @@ class Acee extends React.Component {
         alert(BKP[i]);
     }
 
+    var S;
+    this.setState({Texto1: editorAltoNivel.getValue()});
+
+    //Enviar al Servidor el Texto
+    fetch('/CompilarAltoNivel', {
+      method: 'POST',
+            body: JSON.stringify({ textoEnviado: this.state.Texto1 }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            
+        }).then(response => response.json())
+            .then(Salida => this.setState({ Salida }));
+
+      try{
+        this.setState({Texto2: this.state.Salida.salidaC3D});
+        this.setState({Texto2: this.state.Salida.salidaC3D});
+       //var a=this.state.Salida.salidaConsola;
+       //var b=this.state.Salida.salidaErrores;
+       //var c=this.state.Salida.salidaC3D;
+       //alert(a);
+       //alert(b);
+       //alert(c);
+
+    /*
     //Definicion de Clase Graficador y Gramatica
     var Graficador_1 = require("../Analizadores/Graficador");
     var parser = require("../Analizadores/Lexico").parser;
@@ -61,13 +91,37 @@ class Acee extends React.Component {
 
     //LLamada a Metodo de Graficar
     var graficar = new Graficador_1.Graficador();
-    graficar.GraficarAST(RaizArbol);
+    graficar.GraficarAST(RaizArbol.raiz);
+    */
+    /*
+    var a="ERRORES::::::::::::::\n";
+    if(RaizArbol.Errores.length>0){
+      alert("tiene Errores la Wea");
+      
+      RaizArbol.Errores.forEach(element => {
+        
+        var err=element.lexema.toString();
+        err=err+" ["+element.line+"]";
+        err=err+" ["+element.columna+"]";
+        err=err+" ["+element.tipo.toString()+"]";
+        err=err+" ["+element.descripcion.toString()+"]";
 
+        a+=err.toString();
+      });
+    }
+    RaizArbol.Errores=[];
+    */
+
+
+    //Salida Consola Errores
+    //editorConsola2.setValue(this.state.Salida.salidaErrores);
     //SAlida del Dot en Consola Extra
-    editorConsola3.setValue(graficar.CadenaDot);
+    //editorConsola1.setValue(this.state.Salida.salidaConsola);
     //SAlida del C3D
-    editorC3D.setValue(editorAltoNivel.getValue());
-
+    //editorC3D.setValue(this.state.Salida.salidaC3D);
+    }catch{
+        alert("<Error Catch>[1] Error Accion de Boton");  
+    }
   };
 
   /**********************************************************/
@@ -75,7 +129,9 @@ class Acee extends React.Component {
   /**********************************************************/
 
   CompilarC3D = event => {
+
     alert("Click en el Boton Compilar C3D");
+    
     //Definicion de Consolas
     const editorAltoNivel = this.ace.editor;//Caja del Codigo Alto nivel
     const editorC3D = this.cajaC3D.editor; // Caja del Codigo 3D
@@ -88,7 +144,22 @@ class Acee extends React.Component {
     for (i = 0; i < BKP.length; i++) {
         alert(BKP[i]);
     }
+    var S;
+    this.setState({Texto1: editorAltoNivel.getValue()});
+    
+    //Enviar al Servidor el Texto
+    fetch('/CompilarC3D', {
+      method: 'POST',
+            body: JSON.stringify({ textoEnviado: editorC3D.getValue() }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            
+        }).then(response => response.json())
+            .then(Salida => this.setState({ Salida }));
 
+    try{
+    /*
     //Definicion de Clase Graficador y Gramatica
     var Graficador_1 = require("../Analizadores/Graficador");
     var parser = require("../Analizadores/LexicoC3D").parser;
@@ -97,7 +168,7 @@ class Acee extends React.Component {
     function exec (input) {
         return parser.parse(input);
     }
-    var RaizArbol = exec(editorC3D.getValue().toString());
+    var RaizArbol = exec(editorC3D.getValue());
 
     //LLamada a Metodo de Graficar
     var graficar = new Graficador_1.Graficador();
@@ -105,7 +176,15 @@ class Acee extends React.Component {
 
     //SAlida del Dot en Consola Extra
     editorConsola3.setValue(graficar.CadenaDot);
+    */
+    }catch{
+      alert("<Error Catch>[1] Error Accion de Boton");  
+    }
+  };
 
+  Limpiar = event => {
+    const editorC3D = this.cajaC3D.editor; // Caja del Codigo 3D
+    alert(editorC3D.getValue());
   };
   /**********************************************************/
   /*******      HTML GENERADO                         *******/
@@ -121,8 +200,10 @@ class Acee extends React.Component {
           <ButtonToolbar>
             <Button variant="primary" onClick={this.CompilarCAltoNivel}>Compilar</Button>
             <Button variant="secondary"onClick={this.CompilarC3D}>Compilar C3D</Button>
+            
             <Button variant="success">Debug</Button>
             <Button variant="warning">Pausa</Button>
+            <Button variant="light"onClick={this.Limpiar} >Limpiar</Button>
           </ButtonToolbar>
           <br/>
         </div>
@@ -140,6 +221,7 @@ class Acee extends React.Component {
           ref={instance => { this.ace = instance; }}
           editorProps={{$blockScrolling: true}}
           showGutter={true}
+          value={this.state.Texto1}
           />      
         </div> 
 
@@ -154,7 +236,7 @@ class Acee extends React.Component {
               mode="java"
               theme="textmate" 
               name="UNIQUE_ID_OF_DIV"
-
+              value={this.state.Salida.salidaConsola}
               ref={instance => { this.ace1 = instance; }}
               editorProps={{$blockScrolling: true}}
               />
@@ -168,6 +250,7 @@ class Acee extends React.Component {
               name="UNIQUE_ID_OF_DIV"
               ref={instance => { this.ace2 = instance; }}
               editorProps={{$blockScrolling: true}}
+              value={this.state.Salida.salidaErrores}
               />
             </Tab>
             <Tab eventKey="ConsolaExtra" title="ConsolaExtra">
@@ -192,10 +275,12 @@ class Acee extends React.Component {
           height="700px"
           mode="java"
           theme="textmate"
+          
           name="UNIQUE_ID_OF_DIV"
           ref={instance => { this.cajaC3D = instance; }}
           editorProps={{$blockScrolling: true}}
-          />      
+          value={this.state.Salida.salidaC3D}
+          />     
         </div>   
 
     </div>

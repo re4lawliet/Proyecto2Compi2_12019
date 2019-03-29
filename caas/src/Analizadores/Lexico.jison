@@ -2,6 +2,20 @@
 %{
     var countNodo=0;
     var raizArbol;
+
+    var Error = /** @class */ (function () {
+    function Error(ptoken, plinea, pcolumna, ptipo, desc) {
+    this.lexema = ptoken;
+    this.linea = plinea + 1;
+    this.columna = pcolumna + 1;
+    this.tipo = ptipo;
+    this.descripcion = desc;
+}
+    return Error;
+}());
+
+var ListaErrores=new Array();
+
 %}
 /* lexical grammar */
 %lex
@@ -113,7 +127,9 @@
 
 \s+                  /* skip whitespace */
 <<EOF>>               return 'EOF'
-.                     return 'INVALID'
+.                     {
+    var error= new Error(yytext, yylineno, 0, "Lexico", "Error Lexico en: "+yytext);
+    ListaErrores.push(error);}
 
 /lex
 
@@ -165,9 +181,13 @@ exports.Nodo = Nodo;
 
 S:INICIO EOF
         { 
-            console.log("entro al Inicio");
             raizArbol=$1;
-            return raizArbol;
+            var salida={
+                raiz:raizArbol,
+                Errores: ListaErrores
+            };
+            ListaErrores = [];
+            return salida;
         };
 
 INICIO:LISTA_CLASES
@@ -277,6 +297,11 @@ FUNCION: DEF_ATRIBUTO fin
 | DEF_FUNCTION
 {
     $$ = $1;
+}
+| error fin
+{
+    var error= new Error(yytext, yylineno, 0, "Sintactico", "Error Sintactico en: "+yytext);
+    ListaErrores.push(error);}
 };
 
 //-----------------------------------------------------DEF_ATRIBUTO
